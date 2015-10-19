@@ -408,7 +408,7 @@ public class ImageJobDescription extends ParameterMap {
      * @throws ImageOpException
      */
     public double getScaleXY() throws IOException, ImageOpException {
-        // logger.debug("get_scaleXY()");
+        logger.debug("get_scaleXY()");
         if (scaleXY != null) {
             return scaleXY.doubleValue();
         }
@@ -439,6 +439,8 @@ public class ImageJobDescription extends ParameterMap {
             areaHeight = (double) userImgArea.getHeight();
             double scaleX = getDw() / areaWidth * ws;
             double scaleY = getDh() / areaHeight * ws;
+            logger.debug("i'm here! scaleX: " + scaleX + " scaleY " + scaleY + " ws " + ws + " areaW " + areaWidth + " areaHeight " + areaHeight + "dw " + getDw() + " dh " + getDh());
+
             scaleXY = (scaleX > scaleY) ? scaleY : scaleX;
         } else if (isAbsoluteScale()) {
             /*
@@ -508,22 +510,8 @@ public class ImageJobDescription extends ParameterMap {
      */
     public int getDw() throws IOException {
         logger.debug("get_paramDW()");
-        if (paramDW == null) {
-
-            paramDW = getAsInt("dw");
-            paramDH = getAsInt("dh");
-
-            float imgAspect = getInput().getAspect();
-            if (paramDW == 0) {
-                // calculate dw
-                paramDW = Math.round(paramDH * imgAspect);
-                setValue("dw", paramDW);
-            } else if (paramDH == 0) {
-                // calculate dh
-                paramDH = Math.round(paramDW / imgAspect);
-                setValue("dh", paramDH);
-            }
-        }
+        if (paramDW == null)
+        	computeDWH();
         return paramDW;
     }
 
@@ -536,23 +524,31 @@ public class ImageJobDescription extends ParameterMap {
      */
     public int getDh() throws IOException {
         logger.debug("get_paramDH()");
-        if (paramDH == null) {
-
-            paramDW = getAsInt("dw");
-            paramDH = getAsInt("dh");
-
-            float imgAspect = getInput().getAspect();
-            if (paramDW == 0) {
-                // calculate dw
-                paramDW = Math.round(paramDH * imgAspect);
-                setValue("dw", paramDW);
-            } else if (paramDH == 0) {
-                // calculate dh
-                paramDH = Math.round(paramDW / imgAspect);
-                setValue("dh", paramDH);
-            }
-        }
+        if (paramDH == null)
+        	computeDWH();
         return paramDH;
+    }
+    
+    /**
+     * Computes the missing parameter of destination size (if any)
+     * using the other one and the aspect ratio.
+     * 
+     * @throws IOException
+     */
+    private void computeDWH() throws IOException {
+        paramDW = getAsInt("dw");
+        paramDH = getAsInt("dh");
+
+        float aspect = getWAspect() * getInput().getAspect();
+        if (paramDW == 0) {
+            // calculate dw
+            paramDW = Math.round(paramDH * aspect);
+            setValue("dw", paramDW);
+        } else if (paramDH == 0) {
+            // calculate dh
+            paramDH = Math.round(paramDW / aspect);
+            setValue("dh", paramDH);
+        }
     }
 
     /**
@@ -593,6 +589,16 @@ public class ImageJobDescription extends ParameterMap {
         	}
         }
         return paramWH;
+    }
+    
+    /**
+     * Returns the ratio aspect of the image area.
+     * 
+     * @return
+     * @throws IOException
+     */
+    public Float getWAspect() throws IOException {
+    	return getWw()/getWh();
     }
 
     /**

@@ -454,14 +454,10 @@ public class DigilibRequest extends ParameterMap {
                 // pct:x,y,w,h -- region in % of original image
                 String[] parms = region.substring(4).split(",");
                 try {
-                    float x = Float.parseFloat(parms[0]);
-                    setValue("wx", x / 100f);
-                    float y = Float.parseFloat(parms[1]);
-                    setValue("wy", y / 100f);
-                    float w = Float.parseFloat(parms[2]);
-                    setValue("ww", w / 100f);
-                    float h = Float.parseFloat(parms[3]);
-                    setValue("wh", h / 100f);
+                    setValue("wx", Float.parseFloat(parms[0]) / 100f);
+                    setValue("wy", Float.parseFloat(parms[1]) / 100f);
+                    setValue("ww", Float.parseFloat(parms[2]) / 100f);
+                    setValue("wh", Float.parseFloat(parms[3]) / 100f);
                 } catch (Exception e) {
                     errorMessage = "Error parsing range parameter in IIIF path!";
                     logger.error(errorMessage, e);
@@ -470,16 +466,16 @@ public class DigilibRequest extends ParameterMap {
             } else {
                 // x,y,w,h -- region in pixel of original image :-(
                 String[] parms = region.split(",");
-                if (parms.length != 4) {
-                    errorMessage = "Error parsing range parameter in IIIF path!";
-                    logger.error(errorMessage);
-                    return false;
-                } else {
+                try {
                     options.setOption("pxarea");
                     setValueFromString("wx", parms[0]);
                     setValueFromString("wy", parms[1]);
                     setValueFromString("ww", parms[2]);
                     setValueFromString("wh", parms[3]);
+                } catch (Exception e) {
+                    errorMessage = "Error parsing range parameter in IIIF path!";
+                    logger.error(errorMessage, e);
+                    return false;
                 }
             }
         } else {
@@ -511,26 +507,12 @@ public class DigilibRequest extends ParameterMap {
                 // w,h -- pixel size
                 try {
                     String[] parms = size.split(",", 2);
-                    if (parms[0].length() > 0) {
-                        // width param
-                        if (parms[0].startsWith("!")) {
-                            // width (in digilib-like bounding box)
-                            setValueFromString("dw", parms[0].substring(1));
-                        } else if (parms[1].length() == 0) {
-                            // width only
-                            setValueFromString("dw", parms[0]);
-                        } else {
-                            // w,h -- according to spec, we should distort the
-                            // image to match ;-(
-                            errorMessage = "Non-uniform-scale size parameter in IIIF path not supported!";
-                            logger.error(errorMessage);
-                            return false;
-                        }
-                    }
-                    if (parms[1].length() > 0) {
-                        // height param
+                    // width param
+                    if (!parms[0].isEmpty())
+                        setValueFromString("dw", parms[0]);
+                    // height param
+                    if (!parms[1].isEmpty())
                         setValueFromString("dh", parms[1]);
-                    }
                 } catch (Exception e) {
                     errorMessage = "Error parsing size parameter in IIIF path!";
                     logger.error(errorMessage, e);
