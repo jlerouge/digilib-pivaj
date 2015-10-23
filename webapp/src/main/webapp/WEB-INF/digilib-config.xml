@@ -15,10 +15,11 @@
   <!-- List of directories where images are searched.
        Directories with low-resolution images are LAST!!! in list.
 	   Use OS-specific path separators (":" for Unix, ";" for Windows) --> 
-  <parameter name="basedir-list" value="/home/lerouju8/web/images" />
+  <!--<parameter name="basedir-list" value="/home/lerouju8/web/images" />-->
+  <parameter name="basedir-list" value="/home/pivaj/images" />
 
   <!-- Java class to use for image operations -->
-  <!--<parameter name="docuimage-class" value="digilib.image.JAIDocuImage" />-->
+  <!--<parameter name="docuimage-class" value="digilib.image.JAIImageLoaderDocuImage" />-->
   <parameter name="docuimage-class" value="digilib.image.ImageLoaderDocuImage" />
 
   <!-- mimimum amount of scaling done with antialiasing -->

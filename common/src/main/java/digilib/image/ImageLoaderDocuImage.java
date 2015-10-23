@@ -167,6 +167,11 @@ public class ImageLoaderDocuImage extends ImageInfoDocuImage {
     /** the size of the current image */
     protected ImageSize imageSize;
 
+    public ImageLoaderDocuImage() {
+        super();
+        ImageIO.scanForPlugins();
+    }
+
     /**
      * @return the version
      */
