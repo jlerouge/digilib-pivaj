@@ -26,6 +26,7 @@ package digilib.servlet;
  * Author: Robert Casties (robcast@berlios.de)
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -321,8 +322,7 @@ public class ServletOps {
         logger.debug("sending to response. committed=" + response.isCommitted());
         // TODO: should we erase or replace old last-modified header?
         try {
-            OutputStream outstream = response.getOutputStream();
-            // setup output -- if mime type is set use that otherwise
+        	// setup output -- if mime type is set use that otherwise
             // if source is JPG then dest will be JPG else it's PNG
             if (mimeType == null) {
                 mimeType = img.getMimetype();
@@ -338,9 +338,18 @@ public class ServletOps {
             } else {
                 mimeType = "image/png";
             }
-            // write the image
             response.setContentType(mimeType);
+
+            // write the image to a temporary output stream
+            ByteArrayOutputStream outstream = new ByteArrayOutputStream();
             img.writeImage(mimeType, outstream);
+            
+            // sets the content length
+            response.setContentLength(outstream.size());
+            
+            // copy the image to the real output stream
+            outstream.writeTo(response.getOutputStream());
+            
         } catch (IOException e) {
             throw new ServletException("Error sending image:", e);
         }

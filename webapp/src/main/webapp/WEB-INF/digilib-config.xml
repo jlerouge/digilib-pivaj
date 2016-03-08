@@ -16,7 +16,7 @@
        Directories with low-resolution images are LAST!!! in list.
 	   Use OS-specific path separators (":" for Unix, ";" for Windows) --> 
   <!--<parameter name="basedir-list" value="/home/lerouju8/web/images" />-->
-  <parameter name="basedir-list" value="/home/pivaj/images" />
+  <parameter name="basedir-list" value="/home/entitees/proj-litis/pivaj/images" />
 
   <!-- Java class to use for image operations -->
   <!--<parameter name="docuimage-class" value="digilib.image.JAIImageLoaderDocuImage" />-->
@@ -35,10 +35,10 @@
   <parameter name="max-image-size" value="0" />
 
   <!-- number of working threads -->
-  <parameter name="worker-threads" value="2" />
+  <parameter name="worker-threads" value="16" />
 
   <!-- number of waiting requests in queue -->
-  <parameter name="max-waiting-threads" value="20" />
+  <parameter name="max-waiting-threads" value="128" />
 
   <!-- timeout for asynchronous servlet worker (ms) -->
   <parameter name="worker-timeout" value="60000" />
